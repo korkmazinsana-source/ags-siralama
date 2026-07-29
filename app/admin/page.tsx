@@ -6,7 +6,8 @@ import AdminPanelClient from "./AdminPanelClient";
 const verifyAdmin = async () => {
   const cookieStore = await cookies();
   const value = cookieStore.get("admin_auth")?.value;
-  const envPass = process.env.ADMIN_PANEL_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PANEL_PASSWORD;
+  // Temporary hardcoded admin password for development/testing
+  const envPass = "Ozel2026!Panel";
   if (!envPass) return false;
   const expected = crypto.createHash("sha256").update(envPass).digest("hex");
   return value === expected;

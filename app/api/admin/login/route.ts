@@ -6,7 +6,8 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const password = (body.password || "").toString();
 
-  const envPass = process.env.ADMIN_PANEL_PASSWORD || process.env.NEXT_PUBLIC_ADMIN_PANEL_PASSWORD;
+  // Temporary hardcoded admin password for development/testing
+  const envPass = "Ozel2026!Panel";
   if (!envPass) {
     return NextResponse.json({ error: "Admin password not configured." }, { status: 500 });
   }
