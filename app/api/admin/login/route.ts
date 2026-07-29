@@ -4,10 +4,11 @@ import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
-  const password = (body.password || "").toString();
+  const password = (body.password || "").toString().trim();
 
-  // Temporary hardcoded admin password for development/testing
-  const envPass = "Ozel2026!Panel";
+  const envPass =
+    process.env.ADMIN_PANEL_PASSWORD ||
+    "Ozel2026!Panel";
   if (!envPass) {
     return NextResponse.json({ error: "Admin password not configured." }, { status: 500 });
   }
