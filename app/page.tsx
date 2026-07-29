@@ -37,6 +37,89 @@ export default function Home() {
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ResultStats | null>(null);
+  const [trackingCode, setTrackingCode] = useState<string | null>(null);
+  const [searchCode, setSearchCode] = useState("");
+  const [searchMessage, setSearchMessage] = useState<string | null>(null);
+  const [searchResult, setSearchResult] = useState<{
+    ags: number;
+    oabt: number;
+    score: number;
+    rank: number;
+    totalParticipants: number;
+    percentileLabel: string;
+  } | null>(null);
+
+  const generateUniqueTrackingCode = async (): Promise<string> => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // exclude O,0,I,1
+    const prefix = "OZEL-";
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const part = Array.from({ length: 8 })
+        .map(() => chars[Math.floor(Math.random() * chars.length)])
+        .join("");
+      const code = `${prefix}${part}`;
+      const { data: existing, error } = await supabase
+        .from("scores")
+        .select("tracking_code")
+        .eq("tracking_code", code)
+        .maybeSingle();
+      if (error) throw error;
+      if (!existing) return code;
+    }
+    // fallback deterministic code if many collisions (extremely unlikely)
+    return `${prefix}${Date.now().toString(36).toUpperCase().slice(-8)}`;
+  };
+
+  const handleLookup = async (codeInput?: string) => {
+    setSearchMessage(null);
+    setSearchResult(null);
+    const raw = (codeInput ?? searchCode).trim().toUpperCase();
+    if (!raw) {
+      setSearchMessage("Lütfen bir takip kodu girin.");
+      return;
+    }
+
+    // select the record by tracking_code only
+    const { data: record, error: recordError } = await supabase
+      .from("scores")
+      .select("ags,oabt,score")
+      .eq("tracking_code", raw)
+      .maybeSingle();
+
+    if (recordError) {
+      setSearchMessage("Sorgu sırasında bir hata oluştu. Lütfen tekrar deneyin.");
+      return;
+    }
+
+    if (!record) {
+      setSearchMessage("Takip kodu bulunamadı. Lütfen kodunuzu kontrol edin.");
+      return;
+    }
+
+    // compute ranking among all scores
+    const { data: allScores, error: allError } = await supabase
+      .from("scores")
+      .select("score");
+
+    if (allError || !allScores) {
+      setSearchMessage("Sıralama hesaplanamadı. Lütfen tekrar deneyin.");
+      return;
+    }
+
+    const totalParticipants = allScores.length;
+    const userScore = Number(record.score);
+    const higherCount = allScores.filter((s) => Number(s.score) > userScore).length;
+    const rank = higherCount + 1;
+    const percentile = Math.round((rank / totalParticipants) * 100);
+
+    setSearchResult({
+      ags: Number(record.ags),
+      oabt: Number(record.oabt),
+      score: Number(record.score),
+      rank,
+      totalParticipants,
+      percentileLabel: `İlk %${percentile}`,
+    });
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -71,6 +154,13 @@ export default function Home() {
 
     const score = (agsValue / 80) * 50 + (oabtValue / 50) * 50;
     const uuid = getOrCreateUuid();
+    let newTrackingCode: string | null = null;
+    try {
+      newTrackingCode = await generateUniqueTrackingCode();
+    } catch (e) {
+      // if code generation fails, proceed without tracking code (do not block user)
+      newTrackingCode = null;
+    }
     setLoading(true);
 
     const { data: existing, error: existingError } = await supabase
@@ -93,14 +183,15 @@ export default function Home() {
       return;
     }
 
-    const insertResult = await supabase.from("scores").insert([
-      {
-        uuid,
-        ags: agsValue,
-        oabt: oabtValue,
-        score,
-      },
-    ]);
+    const insertPayload: any = {
+      uuid,
+      ags: agsValue,
+      oabt: oabtValue,
+      score,
+    };
+    if (newTrackingCode) insertPayload.tracking_code = newTrackingCode;
+
+    const insertResult = await supabase.from("scores").insert([insertPayload]);
 
     if (insertResult.error) {
       setLoading(false);
@@ -149,6 +240,7 @@ export default function Home() {
     setMessage("Kayıt başarıyla oluşturuldu.");
     setAgs("");
     setOabt("");
+    if (newTrackingCode) setTrackingCode(newTrackingCode);
   };
 
   return (
@@ -308,6 +400,24 @@ export default function Home() {
                 <p className="mt-4 text-3xl font-semibold">{result.percentileLabel}</p>
               </div>
               </section>
+              {trackingCode ? (
+                <div className="rounded-[1.5rem] bg-white p-6 text-slate-950 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:col-span-2">
+                  <h3 className="text-lg font-semibold">Kişisel Takip Kodunuz</h3>
+                  <p className="mt-4 text-3xl font-bold tracking-wider">{trackingCode}</p>
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => navigator.clipboard?.writeText(trackingCode)}
+                      className="inline-flex items-center justify-center rounded-3xl bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-400"
+                    >
+                      Kodu Kopyala
+                    </button>
+                    <p className="text-sm text-slate-500 self-center">
+                      Bu kodu kaydedin. Güncel sıralamanızı daha sonra aynı veya farklı bir cihazdan bu kodla öğrenebilirsiniz.
+                    </p>
+                  </div>
+                </div>
+              ) : null}
               <div className="rounded-[1.5rem] bg-slate-950 p-6 text-slate-100 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:col-span-2">
               <p className="text-sm leading-6 text-slate-100">
                 📢 Bu sıralama sistemi girilen yeni verilerle sürekli güncellenmektedir. Güncel sıralamanızı, ortalama netleri ve son istatistikleri öğrenmek için Telegram kanalımıza katılabilirsiniz.
@@ -327,6 +437,69 @@ export default function Home() {
             </>
           ) : null}
         </form>
+
+        <section className="rounded-[1.5rem] bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+          <h2 className="text-xl font-semibold">Takip Koduyla Güncel Sıralamamı Öğren</h2>
+          <p className="mt-2 text-sm text-slate-600">Takip kodunuzu girin ve mevcut sıralamanızı görüntüleyin.</p>
+          <div className="mt-4 flex gap-3">
+            <input
+              value={searchCode}
+              onChange={(e) => setSearchCode(e.target.value)}
+              placeholder="OZEL-XXXXXXXX"
+              className="rounded-3xl border px-4 py-3 flex-1"
+            />
+            <button
+              type="button"
+              onClick={() => handleLookup()}
+              className="inline-flex items-center justify-center rounded-3xl bg-sky-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-sky-400"
+            >
+              Sıralamamı Göster
+            </button>
+          </div>
+          {searchMessage ? (
+            <p className="mt-3 text-sm text-red-500">{searchMessage}</p>
+          ) : null}
+
+          {searchResult ? (
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              <div className="rounded-[1rem] bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">AGS Neti</p>
+                <p className="mt-2 font-semibold">{searchResult.ags.toFixed(2)}</p>
+              </div>
+              <div className="rounded-[1rem] bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">ÖABT Neti</p>
+                <p className="mt-2 font-semibold">{searchResult.oabt.toFixed(2)}</p>
+              </div>
+              <div className="rounded-[1rem] bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Puan</p>
+                <p className="mt-2 font-semibold">{searchResult.score.toFixed(2)}</p>
+              </div>
+              <div className="rounded-[1rem] bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Güncel Sıralama</p>
+                <p className="mt-2 font-semibold">{searchResult.rank}</p>
+              </div>
+              <div className="rounded-[1rem] bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Toplam Katılımcı</p>
+                <p className="mt-2 font-semibold">{searchResult.totalParticipants}</p>
+              </div>
+              <div className="rounded-[1rem] bg-slate-50 p-4">
+                <p className="text-sm text-slate-500">Yüzdelik Dilim</p>
+                <p className="mt-2 font-semibold">{searchResult.percentileLabel}</p>
+              </div>
+            </div>
+          ) : null}
+          {searchResult ? (
+            <div className="mt-4">
+              <button
+                type="button"
+                onClick={() => handleLookup(searchCode)}
+                className="inline-flex items-center justify-center rounded-3xl bg-sky-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-400"
+              >
+                Sıralamamı Yenile
+              </button>
+            </div>
+          ) : null}
+        </section>
 
         <div className="rounded-[1.75rem] bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 p-6 shadow-[0_24px_80px_rgba(14,165,233,0.2)] text-white transition sm:p-8">
           <div className="space-y-4 sm:flex sm:items-start sm:justify-between sm:gap-6">
