@@ -25,11 +25,7 @@ const getOrCreateUuid = (): string => {
   const newUuid =
     typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
       ? crypto.randomUUID()
-      : Array.from({ length: 36 }, (_, i) => {
-          if ([8, 13, 18, 23].includes(i)) return "-";
-          const random = Math.floor(Math.random() * 16).toString(16);
-          return i === 14 ? "4" : i === 19 ? ((Number(random, 16) & 0x3) | 0x8).toString(16) : random;
-        }).join("");
+      : `${Date.now()}-${Math.random().toString(36).substring(2)}`;
 
   localStorage.setItem(STORAGE_KEY, newUuid);
   return newUuid;
