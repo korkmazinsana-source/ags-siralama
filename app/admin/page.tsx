@@ -18,14 +18,7 @@ export default async function Page() {
       <div className="p-8">
         <h1 className="text-2xl font-semibold">Admin Girişi</h1>
         <p className="mt-2 text-sm text-slate-600">Lütfen şifreyi girin.</p>
-        <form
-          action="/api/admin/login"
-          method="post"
-          className="mt-4 flex gap-2 max-w-md"
-        >
-          <input name="password" type="password" className="flex-1 rounded-md border px-3 py-2" />
-          <button type="submit" className="rounded-md bg-sky-500 px-4 py-2 text-white">Giriş</button>
-        </form>
+        <AdminLoginForm />
         <p className="mt-4 text-sm text-slate-500">Bu panel yalnızca yönetici içindir.</p>
       </div>
     );
