@@ -43,16 +43,29 @@ export default function Home() {
     setMessage(null);
     setResult(null);
 
-    const agsValue = Number(ags.replace(",", "."));
-    const oabtValue = Number(oabt.replace(",", "."));
+    const agsValue = Number(String(ags).replace(",", "."));
+    const oabtValue = Number(String(oabt).replace(",", "."));
 
     if (Number.isNaN(agsValue) || Number.isNaN(oabtValue)) {
       setMessage("Lütfen AGS ve ÖABT alanlarına geçerli sayılar girin.");
       return;
     }
 
-    if (agsValue < 0 || agsValue > 80 || oabtValue < 0 || oabtValue > 50) {
-      setMessage("AGS 0-80 ve ÖABT 0-50 aralığında olmalıdır.");
+    const isQuarterStep = (value: number) =>
+      Math.abs(value * 4 - Math.round(value * 4)) < 0.000001;
+
+    if (!isQuarterStep(agsValue) || !isQuarterStep(oabtValue)) {
+      setMessage("Net değeri yalnızca ,00, ,25, ,50 veya ,75 ile bitebilir.");
+      return;
+    }
+
+    if (agsValue < 0 || agsValue > 80) {
+      setMessage("AGS 0 ile 80 arasında olmalıdır.");
+      return;
+    }
+
+    if (oabtValue < 0 || oabtValue > 50) {
+      setMessage("ÖABT 0 ile 50 arasında olmalıdır.");
       return;
     }
 
@@ -218,7 +231,7 @@ export default function Home() {
               inputMode="decimal"
               min="0"
               max="80"
-              step="0.1"
+              step="0.25"
               placeholder="0 - 80"
               className="h-14 rounded-3xl border border-sky-500/20 bg-slate-900/90 px-4 text-base text-white outline-none transition focus:border-sky-300 focus:ring-2 focus:ring-sky-300/20"
             />
@@ -233,7 +246,7 @@ export default function Home() {
               inputMode="decimal"
               min="0"
               max="50"
-              step="0.1"
+              step="0.25"
               placeholder="0 - 50"
               className="h-14 rounded-3xl border border-sky-500/20 bg-slate-900/90 px-4 text-base text-white outline-none transition focus:border-sky-300 focus:ring-2 focus:ring-sky-300/20"
             />
@@ -294,6 +307,22 @@ export default function Home() {
                 <p className="mt-4 text-3xl font-semibold">{result.percentileLabel}</p>
               </div>
             </section>
+            <div className="rounded-[1.5rem] bg-slate-950 p-6 text-slate-100 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:col-span-2">
+              <p className="text-sm leading-6 text-slate-100">
+                📢 Bu sıralama sistemi girilen yeni verilerle sürekli güncellenmektedir. Güncel sıralamanızı, ortalama netleri ve son istatistikleri öğrenmek için Telegram kanalımıza katılabilirsiniz.
+              </p>
+              <a
+                href="https://t.me/ozelegitim2027"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex w-full items-center justify-center rounded-3xl bg-sky-500 px-6 py-4 text-base font-semibold text-white transition hover:bg-sky-400"
+              >
+                📲 Güncel Sıralamamı Telegram'dan Öğren
+              </a>
+              <p className="mt-4 text-xs leading-5 text-slate-400">
+                Yeni veri girişleri oldukça sıralamalar değişebilir. En güncel sıralamanızı Telegram kanalımızdan takip edebilirsiniz.
+              </p>
+            </div>
           ) : null}
         </form>
 
