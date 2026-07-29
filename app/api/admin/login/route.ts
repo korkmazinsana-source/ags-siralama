@@ -6,22 +6,16 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const password = (body.password || "").toString().trim();
 
-  const envPass =
-    process.env.ADMIN_PANEL_PASSWORD ||
-    "Ozel2026!Panel";
-  if (!envPass) {
-    return NextResponse.json({ error: "Admin password not configured." }, { status: 500 });
-  }
-
-  const hash = crypto.createHash("sha256").update(password).digest("hex");
-  const expected = crypto.createHash("sha256").update(envPass).digest("hex");
-
-  if (hash !== expected) {
+  // Successful login if password exactly matches this fixed admin password
+  if (password !== "05399505925") {
     return NextResponse.json({ ok: false }, { status: 401 });
   }
 
+  // Preserve existing cookie mechanism: set cookie value to the hash of the server secret
+  const cookieSecret = "Ozel2026!Panel";
+  const expected = crypto.createHash("sha256").update(cookieSecret).digest("hex");
+
   const res = NextResponse.json({ ok: true });
-  // set httpOnly cookie with the expected hash
   res.cookies.set({ name: "admin_auth", value: expected, httpOnly: true, path: "/", sameSite: "strict", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 7 });
   return res;
 }
