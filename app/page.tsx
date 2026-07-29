@@ -267,7 +267,8 @@ export default function Home() {
           ) : null}
 
           {result ? (
-            <section className="grid gap-6 rounded-[1.5rem] bg-white p-6 text-slate-950 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:grid-cols-2">
+            <>
+              <section className="grid gap-6 rounded-[1.5rem] bg-white p-6 text-slate-950 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:grid-cols-2">
               <div className="rounded-[1.5rem] bg-slate-950 p-6 text-white shadow-[0_18px_40px_rgba(14,165,233,0.12)] sm:col-span-2">
                 <h2 className="text-xl font-semibold">Sonuçlarınız</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-300">
@@ -306,8 +307,8 @@ export default function Home() {
                 <p className="text-sm uppercase tracking-[0.18em] text-sky-300">Yüzdelik Diliminiz</p>
                 <p className="mt-4 text-3xl font-semibold">{result.percentileLabel}</p>
               </div>
-            </section>
-            <div className="rounded-[1.5rem] bg-slate-950 p-6 text-slate-100 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:col-span-2">
+              </section>
+              <div className="rounded-[1.5rem] bg-slate-950 p-6 text-slate-100 shadow-[0_18px_60px_rgba(15,23,42,0.08)] sm:col-span-2">
               <p className="text-sm leading-6 text-slate-100">
                 📢 Bu sıralama sistemi girilen yeni verilerle sürekli güncellenmektedir. Güncel sıralamanızı, ortalama netleri ve son istatistikleri öğrenmek için Telegram kanalımıza katılabilirsiniz.
               </p>
@@ -322,7 +323,8 @@ export default function Home() {
               <p className="mt-4 text-xs leading-5 text-slate-400">
                 Yeni veri girişleri oldukça sıralamalar değişebilir. En güncel sıralamanızı Telegram kanalımızdan takip edebilirsiniz.
               </p>
-            </div>
+              </div>
+            </>
           ) : null}
         </form>
 
