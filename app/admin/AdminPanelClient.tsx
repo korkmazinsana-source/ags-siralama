@@ -60,6 +60,90 @@ export default function AdminPanelClient({ rows }: { rows: Row[] }) {
     return acc;
   }, {});
 
+  // Assignment simulation state and computations
+  const [assignCount, setAssignCount] = useState<number>(2000);
+
+  const sortedByScoreDesc = useMemo(() => rows.slice().sort((a, b) => b.score - a.score), [rows]);
+
+  const totalParticipants = rows.length;
+  const avgScore = totalParticipants ? (scoreVals.reduce((s, v) => s + v, 0) / totalParticipants) : 0;
+
+  const scoreBuckets = useMemo(() => {
+    const buckets: { range: string; min: number; max: number; count: number }[] = [
+      { range: "90-100", min: 90, max: 100, count: 0 },
+      { range: "85-90", min: 85, max: 90, count: 0 },
+      { range: "80-85", min: 80, max: 85, count: 0 },
+      { range: "75-80", min: 75, max: 80, count: 0 },
+      { range: "70-75", min: 70, max: 75, count: 0 },
+      { range: "<70", min: -Infinity, max: 70, count: 0 },
+    ];
+    rows.forEach((r) => {
+      for (const b of buckets) {
+        if (r.score >= b.min && r.score < b.max) {
+          b.count++;
+          break;
+        }
+      }
+    });
+    return buckets;
+  }, [rows]);
+
+  const cutoff = useMemo(() => {
+    if (assignCount <= 0 || sortedByScoreDesc.length === 0) return null;
+    const idx = Math.min(assignCount, sortedByScoreDesc.length) - 1;
+    return sortedByScoreDesc[idx]?.score ?? null;
+  }, [assignCount, sortedByScoreDesc]);
+
+  const cutoffDensity = useMemo(() => {
+    if (cutoff === null) return 0;
+    const low = cutoff - 0.5;
+    const high = cutoff + 0.5;
+    return rows.filter((r) => r.score >= low && r.score <= high).length;
+  }, [cutoff, rows]);
+
+  const agsNetBuckets = useMemo(() => {
+    const buckets = [
+      { label: "70+", count: 0 },
+      { label: "60-70", count: 0 },
+      { label: "50-60", count: 0 },
+      { label: "<50", count: 0 },
+    ];
+    rows.forEach((r) => {
+      const v = r.ags;
+      if (v >= 70) buckets[0].count++;
+      else if (v >= 60) buckets[1].count++;
+      else if (v >= 50) buckets[2].count++;
+      else buckets[3].count++;
+    });
+    return buckets;
+  }, [rows]);
+
+  const oabtNetBuckets = useMemo(() => {
+    const buckets = [
+      { label: "45+", count: 0 },
+      { label: "40-45", count: 0 },
+      { label: "35-40", count: 0 },
+      { label: "30-35", count: 0 },
+      { label: "<30", count: 0 },
+    ];
+    rows.forEach((r) => {
+      const v = r.oabt;
+      if (v >= 45) buckets[0].count++;
+      else if (v >= 40) buckets[1].count++;
+      else if (v >= 35) buckets[2].count++;
+      else if (v >= 30) buckets[3].count++;
+      else buckets[4].count++;
+    });
+    return buckets;
+  }, [rows]);
+
+  const autoComment = useMemo(() => {
+    const highest = scoreBuckets.reduce((a, b) => (a.count >= b.count ? a : b));
+    if (!highest) return "";
+    const approx = cutoff !== null ? `Tahmini kapanış: ${cutoff.toFixed(2)} (yaklaşık)` : "";
+    return `Mevcut verilere göre aday yoğunluğu ${highest.range} puan aralığında görülmektedir. ${assignCount} kişilik atama senaryosunda ${approx} bu bölgede oluşabilir.`;
+  }, [scoreBuckets, cutoff, assignCount]);
+
   return (
     <div>
       <div className="mb-4 flex gap-3">
@@ -102,6 +186,65 @@ export default function AdminPanelClient({ rows }: { rows: Row[] }) {
           </div>
         </div>
       </div>
+
+      <section className="rounded-[1.5rem] bg-white p-4 mb-6 shadow">
+        <h3 className="text-lg font-semibold">Atama Simülasyonu ve Veri Analizi</h3>
+        <div className="mt-3 flex items-center gap-3">
+          <label className="text-sm">Atama Sayısı:</label>
+          <input
+            type="number"
+            value={assignCount}
+            onChange={(e) => setAssignCount(Number(e.target.value || 0))}
+            min={0}
+            className="rounded-md border px-2 py-1 w-36"
+          />
+        </div>
+
+        <div className="grid sm:grid-cols-3 gap-3 mt-4 text-sm">
+          <div>Toplam katılımcı: <b>{totalParticipants}</b></div>
+          <div>Ortalama puan: <b>{avgScore.toFixed(2)}</b></div>
+          <div>En yüksek puan: <b>{(Math.max(...(scoreVals.length?scoreVals:[0]))).toFixed(2)}</b></div>
+          <div>En düşük puan: <b>{(Math.min(...(scoreVals.length?scoreVals:[0]))).toFixed(2)}</b></div>
+          <div>Kesme puanı (tahmin): <b>{cutoff !== null ? cutoff.toFixed(2) : "—"}</b></div>
+          <div>Aynı civarda aday sayısı: <b>{cutoffDensity}</b></div>
+        </div>
+
+        <div className="mt-4 grid sm:grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-semibold">Puan dağılımı</h4>
+            <div className="mt-2">
+              {scoreBuckets.map((b) => (
+                <div key={b.range} className="flex justify-between text-sm py-1 border-b border-slate-100">
+                  <span>{b.range}</span>
+                  <span className="font-medium">{b.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold">Net analizleri</h4>
+            <div className="mt-2">
+              <div className="text-sm font-medium">AGS</div>
+              {agsNetBuckets.map((b) => (
+                <div key={b.label} className="flex justify-between text-sm py-1 border-b border-slate-100">
+                  <span>{b.label}</span>
+                  <span className="font-medium">{b.count}</span>
+                </div>
+              ))}
+
+              <div className="text-sm font-medium mt-3">ÖABT</div>
+              {oabtNetBuckets.map((b) => (
+                <div key={b.label} className="flex justify-between text-sm py-1 border-b border-slate-100">
+                  <span>{b.label}</span>
+                  <span className="font-medium">{b.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 text-sm italic text-slate-600">{autoComment}</div>
+      </section>
 
       <div className="overflow-auto bg-white rounded shadow">
         <table className="w-full table-auto">
