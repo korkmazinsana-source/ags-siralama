@@ -1,16 +1,13 @@
 import { cookies } from "next/headers";
 import { supabase } from "@/lib/supabase";
-import crypto from "crypto";
 import AdminPanelClient from "./AdminPanelClient";
+import AdminLoginForm from "./AdminLoginForm";
 
 const verifyAdmin = async () => {
   const cookieStore = await cookies();
   const value = cookieStore.get("admin_auth")?.value;
-  // Temporary hardcoded admin password for development/testing
-  const envPass = "Ozel2026!Panel";
-  if (!envPass) return false;
-  const expected = crypto.createHash("sha256").update(envPass).digest("hex");
-  return value === expected;
+  // simple flag cookie set on successful login
+  return value === "ADMIN_AUTH_OK";
 };
 
 export default async function Page() {
