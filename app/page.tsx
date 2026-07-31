@@ -258,6 +258,46 @@ export default function Home() {
           </p>
         </div>
 
+        <div className="rounded-[1.75rem] bg-white p-6 shadow-[0_25px_60px_rgba(15,23,42,0.08)] ring-1 ring-slate-200 transition hover:-translate-y-0.5 sm:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-base font-semibold tracking-[0.24em] text-slate-900">
+                🎯 AGS 2027 Özel Eğitim ÖABT Hazırlık Paketi
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold text-slate-950 sm:text-3xl">
+                ÖABT'de başarı hedefleyen öğretmen adayları için hazırlanan özel paket.
+              </h2>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+                Bu paket ile sınav hazırlığınızı sistematik şekilde yönetirken, ihtiyaç duyduğunuz tüm destek ve kaynaklara tek noktadan erişirsiniz.
+              </p>
+            </div>
+            <a
+              href="/ags-2027-paketleri"
+              className="inline-flex h-14 items-center justify-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white transition hover:bg-sky-500"
+            >
+              Paketi İncele
+            </a>
+          </div>
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="rounded-3xl bg-slate-50 p-5 shadow-sm ring-1 ring-slate-200">
+              <p className="text-sm font-semibold text-slate-800">✅ Denemeler</p>
+            </div>
+            <div className="rounded-3xl bg-slate-50 p-5 shadow-sm ring-1 ring-slate-200">
+              <p className="text-sm font-semibold text-slate-800">✅ Soru çözümleri</p>
+            </div>
+            <div className="rounded-3xl bg-slate-50 p-5 shadow-sm ring-1 ring-slate-200">
+              <p className="text-sm font-semibold text-slate-800">✅ Ders notları</p>
+            </div>
+            <div className="rounded-3xl bg-slate-50 p-5 shadow-sm ring-1 ring-slate-200">
+              <p className="text-sm font-semibold text-slate-800">✅ PDF kaynak arşivi</p>
+            </div>
+            <div className="rounded-3xl bg-slate-50 p-5 shadow-sm ring-1 ring-slate-200">
+              <p className="text-sm font-semibold text-slate-800">✅ Sınav analizleri</p>
+            </div>
+          </div>
+        </div>
+
         <div className="rounded-[1.75rem] bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 p-6 shadow-[0_20px_70px_rgba(14,165,233,0.2)] text-white transition sm:p-8">
           <div className="space-y-4 sm:flex sm:items-start sm:justify-between sm:gap-6">
             <div>
