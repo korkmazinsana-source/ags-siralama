@@ -17,62 +17,84 @@ const features = [
 
 export default function Ags2027PaketleriPage() {
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        <section className="overflow-hidden rounded-[2rem] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 px-6 py-14 text-white shadow-2xl sm:px-10">
-          <div className="max-w-3xl">
-            <p className="mb-4 inline-flex rounded-full bg-sky-500/20 px-4 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-sky-200">
-              AGS 2027 Özel Eğitim ÖABT Hazırlık Paketi
-            </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-              AGS 2027 Özel Eğitim ÖABT Hazırlık Paketi
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">
-              Atandıran Özel Eğitim ÖABT'yi fullemek hedefimiz.
-            </p>
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-blue-100 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
+        <section className="overflow-hidden rounded-[2rem] border border-white/60 bg-gradient-to-br from-slate-950 via-sky-950 to-blue-900 px-6 py-8 text-white shadow-[0_25px_90px_rgba(2,6,23,0.25)] sm:px-8 lg:px-10 lg:py-12">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+            <div className="max-w-3xl">
+              <p className="inline-flex rounded-full border border-sky-400/30 bg-sky-400/15 px-4 py-2 text-sm font-semibold uppercase tracking-[0.24em] text-sky-200">
+                Profesyonel Online Eğitim Platformu
+              </p>
+              <h1 className="mt-6 text-4xl font-black tracking-tight text-white sm:text-5xl lg:text-6xl">
+                AGS 2027 Özel Eğitim ÖABT Hazırlık Paketi
+              </h1>
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-200">
+                Atandıran Özel Eğitim ÖABT&apos;yi fullemek hedefimiz.
+              </p>
 
-            <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
-              <div className="space-y-6 rounded-[1.75rem] bg-white/5 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.16)] ring-1 ring-white/10 backdrop-blur sm:p-8">
+              <div className="mt-8 flex flex-wrap gap-3">
+                <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-sky-100 backdrop-blur">
+                  ✔ Düzenli deneme takibi
+                </span>
+                <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-sky-100 backdrop-blur">
+                  ✔ Soru çözüm desteği
+                </span>
+                <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-sky-100 backdrop-blur">
+                  ✔ Planlı hazırlık süreci
+                </span>
+              </div>
+
+              <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/10 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.18)] backdrop-blur">
                 <h2 className="text-xl font-semibold text-slate-100">Neden bu paket?</h2>
-                <p className="mt-4 text-base leading-7 text-slate-200">
+                <p className="mt-3 text-base leading-7 text-slate-200">
                   Program kapsamında düzenli denemeler, soru analizleri ve konu tekrarları ile sınav sürecinizi daha planlı şekilde yürütmenize yardımcı oluyoruz.
                 </p>
+              </div>
+            </div>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {features.map((item) => (
-                    <div key={item.label} className="rounded-3xl bg-slate-950/80 p-4 text-slate-100 ring-1 ring-white/10">
-                      <p className="text-sm font-semibold">{item.emoji} {item.label}</p>
-                    </div>
-                  ))}
-                </div>
+            <div className="rounded-[1.75rem] bg-white p-6 shadow-[0_24px_80px_rgba(15,23,42,0.2)] ring-1 ring-slate-200 sm:p-8">
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-sky-700">
+                  Sınırlı Paket Fırsatı
+                </span>
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  Hızlı erişim
+                </span>
               </div>
 
-              <div className="rounded-[1.75rem] bg-white p-8 shadow-xl ring-1 ring-slate-200">
-                <span className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-600">Sınırlı Paket Fırsatı</span>
-                <p className="mt-4 text-5xl font-bold tracking-tight text-slate-950">1200 TL</p>
-                <p className="mt-3 text-sm leading-6 text-slate-600">
-                  ÖABT hazırlığınızı tek paketle güvenli ve planlı şekilde tamamlayın.
+              <p className="mt-6 text-5xl font-black tracking-tight text-slate-950 sm:text-6xl">1200 TL</p>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                ÖABT hazırlığınızı tek paketle güvenli ve planlı şekilde tamamlayın.
+              </p>
+
+              <div className="mt-6 rounded-2xl border border-sky-100 bg-sky-50 p-4">
+                <p className="text-sm font-semibold text-sky-700">Hemen bilgi alın</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Telegram üzerinden paket içeriği, kayıt süreci ve detayları öğrenebilirsiniz.
                 </p>
-                <a
-                  href="https://t.me/ozelegitimm"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-sky-600 px-5 py-4 text-sm font-semibold text-white transition hover:bg-sky-500"
-                >
-                  Telegram'dan Bilgi Al
-                </a>
               </div>
+
+              <a
+                href="https://t.me/ozelegitimm"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-sky-600 to-blue-700 px-5 py-4 text-base font-semibold text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+              >
+                Telegram&apos;dan Bilgi Al
+              </a>
             </div>
           </div>
         </section>
 
-        <section className="mt-10 grid gap-6 sm:grid-cols-2">
+        <section className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {features.map((feature) => (
             <div
               key={feature.label}
-              className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
-              <p className="text-2xl">{feature.emoji}</p>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-100 to-blue-100 text-2xl shadow-sm transition duration-300 group-hover:scale-105">
+                {feature.emoji}
+              </div>
               <h3 className="mt-4 text-lg font-semibold text-slate-900">{feature.label}</h3>
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 {feature.label} ile hazırlığınızı destekleyin ve sınav performansınızı güçlendirin.
@@ -111,9 +133,9 @@ export default function Ags2027PaketleriPage() {
               href="https://t.me/ozelegitimm"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-14 items-center justify-center rounded-full bg-sky-500 px-6 text-sm font-semibold text-white transition hover:bg-sky-400"
+              className="inline-flex h-14 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 text-sm font-semibold text-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
-              Telegram'dan Bilgi Al
+              Telegram&apos;dan Bilgi Al
             </a>
           </div>
         </section>
