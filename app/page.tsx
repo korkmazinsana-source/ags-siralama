@@ -271,12 +271,20 @@ export default function Home() {
                 Bu paket ile sınav hazırlığınızı sistematik şekilde yönetirken, ihtiyaç duyduğunuz tüm destek ve kaynaklara tek noktadan erişirsiniz.
               </p>
             </div>
-            <a
-              href="/ags-2027-paketleri"
-              className="inline-flex h-14 items-center justify-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white transition hover:bg-sky-500"
-            >
-              Paketi İncele
-            </a>
+            <div className="flex flex-col gap-3 sm:items-end">
+              <a
+                href="/ags-2027-paketleri"
+                className="inline-flex h-14 items-center justify-center rounded-full bg-sky-600 px-6 text-sm font-semibold text-white transition hover:bg-sky-500"
+              >
+                Paketi İncele
+              </a>
+              <a
+                href="/analiz"
+                className="inline-flex h-14 items-center justify-center rounded-full bg-slate-950 px-6 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                100 TL Sıralama Analizi
+              </a>
+            </div>
           </div>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
